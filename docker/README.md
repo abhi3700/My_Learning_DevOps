@@ -6,6 +6,7 @@ Learn everything about Docker.
 
 - Build, run & ship applications.
 - It helps in containerization
+- Since Docker Engine only runs on Linux, developers who use Windows and macOS for software development cannot run the engine until they spin up a virtual machine (VM) that runs linux.
 
 ## Legend
 
@@ -18,7 +19,7 @@ $: linux VM
 
 ### macOS
 
-#### Directly on Host machine
+#### 1. Directly on Host machine
 
 **docker**
 
@@ -108,7 +109,21 @@ Once done, just follow the 2 steps from the [stack overflow reference](https://s
 - `$ docker version`
   > It should show the version of docker installed & client, server versions.
 
-#### On Linux VM
+#### 2. On Linux VM [RECOMMENDED]
+
+> It's better to alias docker with `sudo docker` to avoid permission issues.
+
+```console
+$ nano ~/.bashrc
+```
+
+alias docker='sudo docker'
+
+```console
+$ source ~/.bashrc
+```
+
+---
 
 Switch to Linux VM
 
@@ -136,6 +151,36 @@ $ sudo apt install docker.io
 - `$ sudo docker version`
   > It should show the version of docker installed & client, server versions.
 
+---
+
+**Docker login**:
+
+```console
+abhi3700@lima-default:/Users/abhi3700/F/coding/github_repos/My_Learning_NodeJSTS
+$ sudo docker login
+Login with your Docker ID to push and pull images from Docker Hub. If you don't have a Docker ID, head over to https://hub.docker.com to create one.
+Username: abhi3700
+Password:
+WARNING! Your password will be stored unencrypted in /root/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+```
+
+Re-login
+
+```console
+abhi3700@lima-default:/Users/abhi3700/F/coding/github_repos/My_Learning_DevOps/docker/hello-docker
+$ sudo docker login
+Authenticating with existing credentials...
+WARNING! Your password will be stored unencrypted in /root/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+```
+
 ## Getting started
 
 Prefer to do this inside Lima linux VM.
@@ -157,7 +202,7 @@ Prefer to do this inside Lima linux VM.
    ```
 
 4. Build the docker image via `$ docker build -t hello-docker .` inside lima linux VM terminal.
-5. Check images via `$ docker images ls`
+5. Check images via `$ docker images ls`. The image with latest
 
 ```console
 abhi3700@lima-default:/Users/abhi3700/F/coding/github_repos/My_Learning_DevOps/docker/hello-docker$
@@ -168,6 +213,47 @@ node           alpine    9bcdf8fa2b21   2 days ago      167MB
 ```
 
 Hence, we can see that the image `hello-docker` is created.
+
+All the images are stored in this location: `unix:///var/run/docker.sock: Get "http://%2Fvar%2Frun%2Fdocker.sock/v1.24/containers/json"`. Nothing is present in the repo.
+
+6. Run the docker image via `$ docker run hello-docker` inside lima linux VM terminal.
+
+```console
+abhi3700@lima-default:/Users/abhi3700/F/coding/github_repos/My_Learning_DevOps/docker/hello-docker
+$ sudo docker run hello-docker
+Hello Docker!
+```
+
+7. Login using docker hub credentials via `$ sudo docker login` inside lima linux VM terminal.
+
+8. Tag the docker image via `$ docker tag dbbcb40a83b7 abhi3700/hello-docker:latest` inside lima linux VM terminal. And then the image list would be like this:
+
+```console
+$ docker image ls
+REPOSITORY              TAG            IMAGE ID       CREATED      SIZE
+abhi3700/hello-docker   latest   dbbcb40a83b7   3 days ago   167MB
+hello-docker            latest         dbbcb40a83b7   3 days ago   167MB
+node                    alpine         9bcdf8fa2b21   5 days ago   167MB
+```
+
+9. Now, create a repository in the name of `hello-docker` in docker hub under username/account: `abhi3700`. Hence, the host would be [`docker.io/abhi3700/hello-docker`](https://hub.docker.com/r/abhi3700/hello-docker).
+10. Publish the docker image to docker hub via `$ docker image push abhi3700/hello-docker:latest` inside lima linux VM terminal.
+
+```console
+The push refers to repository [docker.io/abhi3700/hello-docker]
+c61658740dfd: Pushed
+d0f090d9a0c6: Mounted from library/node
+8678965b03c8: Mounted from library/node
+7c50737eaab2: Mounted from library/node
+5d3e392a13a0: Mounted from library/node
+hello-docker: digest: sha256:7929aa35b2234697d88c7aa01ceef3d2cd8cf6d7a4579aaa76bd8f03afd5e5b0 size: 1365
+```
+
+11. In the docker hub, the image would be published & it looks like this:
+    ![](../img/docker_hub_hello_docker_published.png)
+12. Pull the docker image from docker hub via `$ docker pull abhi3700/hello-docker` inside any other linux VM terminal using [this](https://labs.play-with-docker.com/).
+
+13. Now, the VM doesn't have node. So, just run the docker image via `$ docker run abhi3700/hello-docker`. So, you don't need any further tool installation or something but docker.
 
 ## Concepts
 
@@ -218,6 +304,12 @@ But, in case of Mac, we don't have a linux kernel support. Hence, we have to use
 ---
 
 **DockerHub** is a registry of docker images. One can pull images from dockerhub and run them on their local machine.
+
+---
+
+**Docker Engine**
+
+The core technology behind Docker. It is an open source software that runs on linux as a daemon that makes it possible to run containers on top of Linux kernel. It is responsible for the container lifecycle and isolation of physical resources (compute, memory, storage) that containers can access. The engine can run on a physical or a virtual machine, but it can only run on top of a Linux kernel i.e. any OS that is flavour of Linux. This is important to understand. Docker engine only runs on Linux.
 
 ## References
 
