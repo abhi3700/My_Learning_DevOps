@@ -7,6 +7,7 @@ Learn everything about Docker.
 - Build, run & ship applications.
 - It helps in containerization
 - Since Docker Engine only runs on Linux, developers who use Windows and macOS for software development cannot run the engine until they spin up a virtual machine (VM) that runs linux.
+- `docker-cli` is like a git for shipping softwares in form of containers.
 
 ## Legend
 
@@ -229,11 +230,11 @@ Hello Docker!
 8. Tag the docker image via `$ docker tag dbbcb40a83b7 abhi3700/hello-docker:latest` inside lima linux VM terminal. And then the image list would be like this:
 
 ```console
-$ docker image ls
+<!-- $ docker image ls
 REPOSITORY              TAG            IMAGE ID       CREATED      SIZE
 abhi3700/hello-docker   latest   dbbcb40a83b7   3 days ago   167MB
 hello-docker            latest         dbbcb40a83b7   3 days ago   167MB
-node                    alpine         9bcdf8fa2b21   5 days ago   167MB
+node                    alpine         9bcdf8fa2b21   5 days ago   167MB -->
 ```
 
 9. Now, create a repository in the name of `hello-docker` in docker hub under username/account: `abhi3700`. Hence, the host would be [`docker.io/abhi3700/hello-docker`](https://hub.docker.com/r/abhi3700/hello-docker).
@@ -254,6 +255,8 @@ hello-docker: digest: sha256:7929aa35b2234697d88c7aa01ceef3d2cd8cf6d7a4579aaa76b
 12. Pull the docker image from docker hub via `$ docker pull abhi3700/hello-docker` inside any other linux VM terminal using [this](https://labs.play-with-docker.com/).
 
 13. Now, the VM doesn't have node. So, just run the docker image via `$ docker run abhi3700/hello-docker`. So, you don't need any further tool installation or something but docker.
+
+> In order to see a container running in the background, use `$ docker ps` command. And list of all the containers, use `$ docker ps -a`.
 
 ## Concepts
 
@@ -310,6 +313,42 @@ But, in case of Mac, we don't have a linux kernel support. Hence, we have to use
 **Docker Engine**
 
 The core technology behind Docker. It is an open source software that runs on linux as a daemon that makes it possible to run containers on top of Linux kernel. It is responsible for the container lifecycle and isolation of physical resources (compute, memory, storage) that containers can access. The engine can run on a physical or a virtual machine, but it can only run on top of a Linux kernel i.e. any OS that is flavour of Linux. This is important to understand. Docker engine only runs on Linux.
+
+---
+
+**Run Ubuntu container**
+
+```console
+abhi3700@lima-default:/Users/abhi3700/F/coding/github_repos/My_Learning_DevOps$ docker run ubuntu
+Unable to find image 'ubuntu:latest' locally
+latest: Pulling from library/ubuntu
+d6cb415e2683: Pull complete
+Digest: sha256:4e5ff048c043848e77a7d4f4dce56c9f5c2c138548df2e2a4631c6769b1a5e52
+Status: Downloaded newer image for ubuntu:latest
+```
+
+> Here, `docker run ubuntu` command will pull the ubuntu image (if not available) from docker hub and run it.
+
+Run Ubuntu container in interactive mode:
+
+```console
+abhi3700@lima-default:/Users/abhi3700/F/coding/github_repos/My_Learning_DevOps$ docker run -it ubuntu
+root@31a9ad4aba1d:/#
+```
+
+> Here, `-it` flag is used to run the container in interactive mode. And `root@31a9ad4aba1d:/#` is the prompt of the container. Now, it's in the root directory of the container with admin previlege i.e. why we can see `#` symbol, otherwise we would see `$` symbol.
+
+## Commands
+
+- `$ docker run hello-world` - To run a docker image. If the image is not available locally, it will be pulled from docker hub.
+- `$ docker ps` - To see the running containers.
+- `$ docker ps -a` - To see all the containers available for execution.
+- `$ docker image ls` - To see the list of images.
+- `$ docker image push <dockerhub_image_name:tag_name>` - To push the image to docker hub.
+- `$ docker image rm <dockerhub_image_name:tag_name>abhi3700/hello-docker:hello-docker` - To remove the image from local machine.
+  ```console
+  $ docker image rm abhi3700/hello-docker:hello-docker
+  ```
 
 ## References
 
