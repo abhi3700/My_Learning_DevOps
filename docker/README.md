@@ -2,12 +2,21 @@
 
 Learn everything about Docker.
 
-## About
+## Overview
 
 - Build, run & ship applications.
 - It helps in containerization
 - Since Docker Engine only runs on Linux, developers who use Windows and macOS for software development cannot run the engine until they spin up a virtual machine (VM) that runs linux.
-- `docker-cli` is like a git for shipping softwares in form of containers.
+- Options for running Docker on macOS M1:
+  - GUI
+    - **Docker Desktop for Mac M1**: Used to run the engine on macOS. It is a native macOS application that you install on your computer. It creates a lightweight VM that runs Linux and then deploys the Docker Engine to that VM.
+    - Rancher Desktop ❌ crashes on mac M1.
+  - CLI:
+    - `docker`: create & manage containers, images
+    - `docker-compose`: run multi-container applications. Requires a YAML file to define the application services to run all at once, which otherwise would take multiple `docker run` commands.
+    - `docker-completion`: auto-completion for docker commands.
+    - ❌ `docker-machine`: create & manage VMs running Docker Engine. Not required if using Docker Desktop for Mac.
+  > So, mainly there are 2 CLI commands to run docker. One is `docker` and another is `docker-compose`.
 
 ## Legend
 
@@ -16,149 +25,61 @@ Learn everything about Docker.
 $: linux VM
 ```
 
-## Installation
+> On macOS M1
 
-### macOS
+## A. Docker Desktop + Docker CLI
 
-#### 1. Directly on Host machine
+### Install
 
-**docker**
+1. Download & install GUI i.e. [Docker Desktop for Mac M1](https://docs.docker.com/docker-for-mac/install/).
+2. `docker` CLI:
+   - install via `$ brew install docker`
+   - upgrade via `$ brew upgrade docker`
 
-- `❯ brew install docker`
-  > if exists, update using `$ brew upgrade docker`
+3. `docker-compose` CLI:
+   - install via `$ brew install docker-compose`
+   - upgrade via `$ brew upgrade docker-compose`
 
----
+### Usage
 
-**docker-machine**
+**Commands**:
 
-- `❯ brew install docker-machine`
-  > if exists, update using `$ brew upgrade docker-machine`
+> After opening the
 
-> `brew` on macOS is like `apt` on Ubuntu.
+- `❯ docker version` - To see the version of docker installed & client, server versions.
+- `❯ docker run hello-world` - To run a docker image. If the image is not available locally, it will be pulled from docker hub.
+- `❯ docker image ls` - To see the list of images.
+- `❯ docker image push <dockerhub_image_name:tag_name>` - To push the image to docker hub.
 
----
+And many more commands are in Docs.
 
-> On macOS the docker binary is only a client and you cannot use it to run the docker daemon, because Docker daemon uses Linux-specific kernel features, therefore you can’t run Docker natively in OS X. So you have to install docker-machine in order to create VM and attach to it.
+If the docker daemon is not running i.e. the docker engine is not running, then you will see this error:
 
-`docker-machine` relies on VirtualBox being installed and will fail if this isn't the case.
-
----
-
-**Install VirtualBox**
-
-```console
-❯ brew install virtualbox
-==> Downloading https://download.virtualbox.org/virtualbox/7.0.2/VirtualBox-7.0.
-Already downloaded: /Users/abhi3700/Library/Caches/Homebrew/downloads/208eb45ad7f80d3564e4de7d8bd64eefbf72aef4ea004f68957f55341724bb0e--VirtualBox-7.0.2-154219-OSX.dmg
-Error: Cask virtualbox depends on hardware architecture being one of [{:type=>:intel, :bits=>64}], but you are running {:type=>:arm, :bits=>64}.
+```sh
+❯ docker version
+Client: Docker Engine - Community
+ Version:           24.0.5
+ API version:       1.43
+ Go version:        go1.20.6
+ Git commit:        ced0996600
+ Built:             Wed Jul 19 19:44:22 2023
+ OS/Arch:           darwin/arm64
+ Context:           default
+Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
 ```
 
-And then shift to intel, x64 architecture by setting up Rosetta. So, just use the command `$ intel` in the terminal to switch to intel arch.
+Congrats! You have successfully installed Docker Desktop on your Mac M1 & are able to use docker CLI.
 
-[Reference](https://docs.docker.com/desktop/install/mac-install/)
-![](../img/mac_m1_docker.png)
+## B. `colima`
 
-```console
-❯ intel
-❯ arch
-i386
-```
+> built on top of `lima`. So, `lima` is dropped. Hereafter we use `colima`.
 
-Retry:
-
-```console
-❯ brew install virtualbox
-==> Downloading https://download.virtualbox.org/virtualbox/7.0.2/VirtualBox-7.0.
-Already downloaded: /Users/abhi3700/Library/Caches/Homebrew/downloads/208eb45ad7f80d3564e4de7d8bd64eefbf72aef4ea004f68957f55341724bb0e--VirtualBox-7.0.2-154219-OSX.dmg
-==> Installing Cask virtualbox
-==> Running installer for virtualbox; your password may be necessary.
-Package installers may write to any location; options such as `--appdir` are ignored.
-Password:
-installer: Package name is Oracle VM VirtualBox
-installer: choices changes file '/private/tmp/choices20221021-14368-qumemc.xml' applied
-installer: Installing at base path /
-installer: The install was successful.
-==> Changing ownership of paths required by virtualbox; your password may be nec
-🍺  virtualbox was successfully installed!
-```
-
-```console
-❯ docker-machine create --driver virtualbox default
-Creating CA: /Users/abhi3700/.docker/machine/certs/ca.pem
-Creating client certificate: /Users/abhi3700/.docker/machine/certs/cert.pem
-Running pre-create checks...
-Error with pre-create check: "This computer doesn't have VT-X/AMD-v enabled. Enabling it in the BIOS is mandatory"
-```
-
-Check if docker supports virtualization:
-
-```console
-❯ sysctl kern.hv_support
-kern.hv_support: 1
-```
-
-> This implies it supports virtualization, but need to be enabled in the BIOS.
-
-TODO: How to enable virtualization in BIOS on Mac M1?
-
-Once done, just follow the 2 steps from the [stack overflow reference](https://stackoverflow.com/a/49719638/6774636)
-
----
-
-**Confirm docker is running**
-
-- `$ docker version`
-  > It should show the version of docker installed & client, server versions.
-
-#### 2. On Linux VM [RECOMMENDED]
-
-> It's better to alias docker with `sudo docker` to avoid permission issues.
-
-```console
-$ nano ~/.bashrc
-```
-
-alias docker='sudo docker'
-
-```console
-$ source ~/.bashrc
-```
-
----
-
-Switch to Linux VM
-
-I am using Lima for this.
-
-```console
-❯ limactl start default
-❯ lima
-```
-
-More related to [Lima](https://github.com/abhi3700/my_coding_toolkit/blob/main/vm_all.md#lima--install-ubuntu-arm-on-mac-arm).
-
----
-
-**Install docker**
-
-```console
-$ sudo apt install docker.io
-```
-
----
-
-**Confirm docker is running**
-
-- `$ sudo docker version`
-  > It should show the version of docker installed & client, server versions.
-
----
+Refer [this](https://github.com/abhi3700/my_coding_toolkit/blob/main/vm_all.md#use-docker-inside-vm-of-colima-like-this).
 
 **Docker login**:
 
 ```console
-abhi3700@lima-default:/Users/abhi3700/F/coding/github_repos/My_Learning_NodeJSTS
-$ sudo docker login
+abhi3700@colima:/$ sudo docker login
 Login with your Docker ID to push and pull images from Docker Hub. If you don't have a Docker ID, head over to https://hub.docker.com to create one.
 Username: abhi3700
 Password:
@@ -346,10 +267,12 @@ root@31a9ad4aba1d:/#
 - `$ docker image ls` - To see the list of images.
 - `$ docker image push <dockerhub_image_name:tag_name>` - To push the image to docker hub.
 - `$ docker image rm <dockerhub_image_name:tag_name>abhi3700/hello-docker:hello-docker` - To remove the image from local machine.
+
   ```console
-  $ docker image rm abhi3700/hello-docker:hello-docker
+  docker image rm abhi3700/hello-docker:hello-docker
   ```
 
 ## References
 
+- [Docker documentation](https://docs.docker.com/)
 - [Docker Tutorial for Beginners | Programming with Mosh](https://www.youtube.com/watch?v=pTFZFxd4hOI)
