@@ -51,7 +51,7 @@ $: linux VM
 - `❯ docker image ls` - To see the list of images.
 - `❯ docker image push <dockerhub_image_name:tag_name>` - To push the image to docker hub.
 
-And many more commands are in Docs.
+And many more commands are [here](#commands) & also in Docs.
 
 If the docker daemon is not running i.e. the docker engine is not running, then you will see this error:
 
