@@ -44,7 +44,9 @@ $: linux VM
 
 #### Commands
 
-> After having run Docker Desktop for Mac M1, you can use `docker` CLI commands.
+> After having run Docker Desktop for Mac M1, you can use `docker` CLI commands. You can see like this on the app:
+
+![](../img/docker_desktop_mac_m1_notfication.png)
 
 - `❯ docker version` - To see the version of docker installed & client, server versions.
 - `❯ docker run hello-world` - To run a docker image. If the image is not available locally, it will be pulled from docker hub.
