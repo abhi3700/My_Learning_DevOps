@@ -107,7 +107,7 @@ Login Succeeded
 
 ## Getting started
 
-Prefer to do this inside Lima linux VM.
+Prefer to do this inside Lima/Colima linux VM on mac M1.
 
 1. Create a project `hello-docker` directory via `$ mkdir hello-docker`
 2. Add a file `app.js` inside `hello-docker` directory. Add the following code:
@@ -180,6 +180,20 @@ hello-docker: digest: sha256:7929aa35b2234697d88c7aa01ceef3d2cd8cf6d7a4579aaa76b
 13. Now, the VM doesn't have node. So, just run the docker image via `$ docker run abhi3700/hello-docker`. So, you don't need any further tool installation or something but docker.
 
 > In order to see a container running in the background, use `$ docker ps` command. And list of all the containers, use `$ docker ps -a`.
+
+14. If you want to access the terminal of the running container, use `$ docker run -it <container_id> /bin/bash`.
+
+```sh
+abhi3700@colima:/Users/abhi3700/F/coding/github_repos/omnipay/omnipay/crates$ docker run --rm -it op-api-service /bin/bashroot@a646cc7a6703:/# ls
+bin  boot  dev  etc  home  lib  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+root@a646cc7a6703:/# /usr/src/app
+bash: /usr/src/app: No such file or directory
+root@a646cc7a6703:/# openssl s_client -tls1_2 -connect ac-xdtjxkm-shard-00-00.xrlfvc5.mongodb.net:27017 -servername ac-xdtjxkm-shard-00-00.xrlfvc5.mongodb.net
+CONNECTED(00000003)
+depth=1 C = US, O = Let's Encrypt, CN = R11
+```
+
+And if you want to access the terminal of the running container, use `$ docker exec -it <container_id>`.
 
 ## Concepts
 
@@ -263,16 +277,65 @@ root@31a9ad4aba1d:/#
 
 ## Commands
 
-- `$ docker run hello-world` - To run a docker image. If the image is not available locally, it will be pulled from docker hub.
-- `$ docker ps` - To see the running containers.
-- `$ docker ps -a` - To see all the containers available for execution.
+### Image
+
 - `$ docker image ls` - To see the list of images.
 - `$ docker image push <dockerhub_image_name:tag_name>` - To push the image to docker hub.
 - `$ docker image rm <dockerhub_image_name:tag_name>abhi3700/hello-docker:hello-docker` - To remove the image from local machine.
 
-  ```console
-  docker image rm abhi3700/hello-docker:hello-docker
-  ```
+Example:
+
+```sh
+docker image rm abhi3700/hello-docker:hello-docker
+```
+
+- `docker rmi <image_id>` - To remove the image from local machine.
+- `docker build -t <dockerhub_image_name:tag_name> .` - To build the image from the Dockerfile.
+- `docker buildx build --platform linux/arm64 -t <dockerhub_image_name>:<image_tag> .` - To build the image from the Dockerfile for different platform.
+   Example:
+
+```sh
+docker buildx build --platform linux/arm64 -t abhi3700/hello-docker:latest .
+```
+
+### Pull/Push
+
+- `docker pull <dockerhub_image_name:tag_name>` - To pull the image from docker hub.
+- `docker push <dockerhub_image_name:tag_name>` - To push the image to docker hub.
+
+### Run
+
+- `docker run hello-world` - To run a docker image. If the image is not available locally, it will be pulled from docker hub.
+- `docker run -it <image_name>` - To run the image.
+- `docker run --rm -it <image_name>` - To run the image and remove the container after it is stopped.
+- `docker run -it <container_id> /bin/bash` - To access the terminal of the running container. This is useful to run commands inside the container. Suppose you have forgotten to set the ENVs in the Dockerfile, then you can set them using this command and then run the CMD command inside the container.
+- `docker run -d <image_name>` - To run the image in detached mode. Detached mode means that the container will run in the background and you will not be able to see the output of the container. To see the output of the container, you can use `docker logs <container_id>`.
+- `docker run -d -p <host_port>:<container_port> <image_name>` - To run the image and map the port of the container to the port of the host machine. And `-d` flag is used to run the container in detached mode.
+
+> NOTE: `-d` flag is opposite of `-it` flag. The former means detached mode and the latter means interactive mode. The former is used to run the container in the background and the latter is used to run the container in the foreground.
+
+### Container
+
+- `docker ps` - To see the running containers.
+- `docker ps -a` - To see all the containers available for execution.
+- `docker rm <container_id>` - To remove the container from local machine.
+- `docker rm -f <container_id>` - To forcefully remove the container from local machine.
+- `docker stop <container_id>` - To stop the running container.
+- `docker start <container_id>` - To start the stopped container.
+- `docker restart <container_id>` - To restart the running container.
+- `docker kill <container_id>` - To kill the running container.
+- `docker inspect <container_id>` - To see the details of the container.
+- `docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <container_id>` - To see the IP address of the container.
+   Usage: to run `curl` command from host machine to make API call to the running container (where the server is running).
+
+### Exec
+
+- `docker exec -it <container_id> <command>` - To execute the command inside the running container.
+
+### Logs
+
+- `docker logs <container_id>` - To see the logs of the running container. Here, it shows the logs of the container and then exits.
+- `docker logs -f <container_id>` - To see the logs of the running container in real-time. Here, it shows the logs of the container and then continues to show the logs in real-time.
 
 ## References
 
