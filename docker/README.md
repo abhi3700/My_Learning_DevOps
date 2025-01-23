@@ -72,7 +72,7 @@ Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docke
 
 Congrats! You have successfully installed Docker Desktop on your Mac M1 & are able to use docker CLI.
 
-## B. `colima`
+## B. `colima` [RECOMMENDED]
 
 > built on top of `lima`. So, `lima` is dropped. Hereafter we use `colima`.
 
@@ -140,7 +140,8 @@ Hence, we can see that the image `hello-docker` is created.
 
 All the images are stored in this location: `unix:///var/run/docker.sock: Get "http://%2Fvar%2Frun%2Fdocker.sock/v1.24/containers/json"`. Nothing is present in the repo.
 
-6. Run the docker image via `$ docker run hello-docker` inside lima linux VM terminal.
+6. First spin-up a linux VM via `$ colima start`.
+7. Run the docker image via `$ docker run hello-docker` inside lima linux VM terminal.
 
 ```console
 abhi3700@lima-default:/Users/abhi3700/F/coding/github_repos/My_Learning_DevOps/docker/hello-docker
@@ -152,8 +153,8 @@ Hello Docker!
 
 8. Tag the docker image via `$ docker tag dbbcb40a83b7 abhi3700/hello-docker:latest` inside lima linux VM terminal. And then the image list would be like this:
 
-```console
-<!-- $ docker image ls
+```sh
+$ docker image ls
 REPOSITORY              TAG            IMAGE ID       CREATED      SIZE
 abhi3700/hello-docker   latest   dbbcb40a83b7   3 days ago   167MB
 hello-docker            latest         dbbcb40a83b7   3 days ago   167MB
@@ -288,9 +289,12 @@ Example:
 ```sh
 docker image rm abhi3700/hello-docker:hello-docker
 ```
-
 - `docker rmi <image_id>` - To remove the image from local machine.
-- `docker build -t <dockerhub_image_name:tag_name> .` - To build the image from the Dockerfile.
+
+### Build
+
+- `docker build -t <image_name> .` - To build the image from the Dockerfile.
+- `docker build -t <image_name:tag_name> .` - To build the image from the Dockerfile.
 - `docker buildx build --platform linux/arm64 -t <dockerhub_image_name>:<image_tag> .` - To build the image from the Dockerfile for different platform.
    Example:
 
@@ -306,11 +310,40 @@ docker buildx build --platform linux/arm64 -t abhi3700/hello-docker:latest .
 ### Run
 
 - `docker run hello-world` - To run a docker image. If the image is not available locally, it will be pulled from docker hub.
+- `docker run --env-file .env hello-api`: To run a docker image locally using env variables. 
+   > Run it locally only, as in production, making `.env` available in the same file system has security risk.
+   > Also, the secrets are not baked into the image.
+  - In production environment, use the cloud's native secret management. Options:
+    - Docker secrets manager [Use secrets via docker compose](https://docs.docker.com/compose/how-tos/use-secrets/).
+      - If you’re using Docker Compose, you can specify the .env file in the docker-compose.yml file:
+      ```yaml
+      version: '3.8'
+      services:
+      app:
+         image: hello-api
+         env_file:
+            - .env
+      ```
+      Then run `$ docker-compose up`.
+    - railway docker image.
+    - Koyeb
+    - ..
+- `docker run --env-file .env -p [3001:8000] hello-api`: This command runs your container and maps port 8000 inside the container to port 3001 on your host machine.
+  - Verify it's running:
+  ```sh
+  curl http://localhost:3001
+  ```
+  Verify if envs are passed properly to the container by inspecting them:
+  ```sh
+  docker exec -it <container_id> env
+  ```
+  > **Do not commit the .env file to version control.**
+
 - `docker run -it <image_name>` - To run the image.
 - `docker run --rm -it <image_name>` - To run the image and remove the container after it is stopped.
 - `docker run -it <container_id> /bin/bash` - To access the terminal of the running container. This is useful to run commands inside the container. Suppose you have forgotten to set the ENVs in the Dockerfile, then you can set them using this command and then run the CMD command inside the container.
 - `docker run -d <image_name>` - To run the image in detached mode. Detached mode means that the container will run in the background and you will not be able to see the output of the container. To see the output of the container, you can use `docker logs <container_id>`.
-- `docker run -d -p <host_port>:<container_port> <image_name>` - To run the image and map the port of the container to the port of the host machine. And `-d` flag is used to run the container in detached mode.
+- `docker run -d -p <host_port>:<container_port> <image_name>` - To run the image and map the port of the container to the port of the host machine. And `-d` flag is used to run the container in detached mode. Here, `-p` is for publishing the [`host_port`:`container_port`].
 
 > NOTE: `-d` flag is opposite of `-it` flag. The former means detached mode and the latter means interactive mode. The former is used to run the container in the background and the latter is used to run the container in the foreground.
 
@@ -331,6 +364,7 @@ docker buildx build --platform linux/arm64 -t abhi3700/hello-docker:latest .
 ### Exec
 
 - `docker exec -it <container_id> <command>` - To execute the command inside the running container.
+- `docker exec -it <container_id> env` - To inspect the envs set inside running container.
 
 ### Logs
 
