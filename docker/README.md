@@ -349,22 +349,64 @@ docker buildx build --platform linux/arm64 -t abhi3700/hello-docker:latest .
 
 ### Container
 
+When an built image is run, it creates a container.
+
 - `docker ps` - To see the running containers.
 - `docker ps -a` - To see all the containers available for execution.
 - `docker rm <container_id>` - To remove the container from local machine.
 - `docker rm -f <container_id>` - To forcefully remove the container from local machine.
 - `docker stop <container_id>` - To stop the running container.
-- `docker start <container_id>` - To start the stopped container.
-- `docker restart <container_id>` - To restart the running container.
+- `docker start <container_id>` - To start the stopped container. Although simply returns the container_id, but still starts the container. You can verify with `docker ps`.
+   > In this case, no initialization done (e.g. for API service like DB init...).
+- `docker restart <container_id>` - To restart the running/stopped container. Stops and starts the container, regardless of its current state. It's equivalent to `docker stop ..` && `docker start ..` commands run in sequence.
+   > In this case, code is run from the beginning like from start of the `main()` fn.
 - `docker kill <container_id>` - To kill the running container.
-- `docker inspect <container_id>` - To see the details of the container.
+- `docker inspect <container_id>` - To see the details of the container like:
+  - env vars set.
+  - host, port
+  - ..
 - `docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <container_id>` - To see the IP address of the container.
    Usage: to run `curl` command from host machine to make API call to the running container (where the server is running).
+
+<details><summary>Sample output:</summary>
+
+```sh
+docker inspect 37b6ab6ef78e
+[
+    {
+        "Id": "37b6ab6ef78eed51f1bed6b2f759186171927ac9ce7eb2b09e5664358403f510",
+        "Created": "2025-01-23T16:56:53.24934793Z",
+        "Path": "/usr/local/bin/op-api-service",
+        "Args": [],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 58030,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2025-01-23T16:56:53.296584036Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:9a19235651892798ffc244b4ab45819cb68428b1560558c2ec1d9314b8ee5c00",
+        "ResolvConfPath": "/var/lib/docker/containers/37b6ab6ef78eed51f1bed6b2f759186171927ac9ce7eb2b09e5664358403f510/resolv.conf",
+      ...
+      ...
+      ...
+    }
+]
+```
+
+</details>
 
 ### Exec
 
 - `docker exec -it <container_id> <command>` - To execute the command inside the running container.
 - `docker exec -it <container_id> env` - To inspect the envs set inside running container.
+- `docker exec -it <container_id> bash` - Get inside the container. This is useful to see the file contents of my docker App (inside `/app`). <kbd>ctrl+d</kbd> to logout.
 
 ### Logs
 
