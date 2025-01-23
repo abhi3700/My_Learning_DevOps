@@ -371,6 +371,19 @@ docker buildx build --platform linux/arm64 -t abhi3700/hello-docker:latest .
 - `docker logs <container_id>` - To see the logs of the running container. Here, it shows the logs of the container and then exits.
 - `docker logs -f <container_id>` - To see the logs of the running container in real-time. Here, it shows the logs of the container and then continues to show the logs in real-time.
 
+### Daemon storage (Disk, ..)
+
+Usage: It can happen that when building multiple times (especially in Rust build), it can take away all the space. So, leads to error: `No space left on device` 😞.
+
+- `docker info`: Get daemon info.
+- `docker system df`: Disk usage.
+- `docker image prune -a`: Delete old Docker images.
+- `docker container prune`: Remove dangling containers.
+- `docker network prune`: Remove unused Docker networks.
+- `docker volumes prune`: Clean up volumes.
+- `docker builder prune`: Free up build cache.
+- `docker builder prune --all`: remove all unused build cache layers. If you want to ensure no cache layers remain, use the `--all` flag.
+
 ## References
 
 - [Docker documentation](https://docs.docker.com/)
