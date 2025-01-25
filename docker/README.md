@@ -5,8 +5,11 @@ Learn everything about Docker.
 ## Overview
 
 - Build, run & ship applications.
-- It helps in containerization
-- Since Docker Engine only runs on Linux, developers who use Windows and macOS for software development cannot run the engine until they spin up a virtual machine (VM) that runs linux.
+- It helps in containerization.
+- Since Docker Engine only runs on Linux kernel. That's why it supports linux OS. Developers using Windows and macOS for software development cannot run the engine until they spin up a virtual machine (VM) that runs linux.
+- For macOS M1, one can use `colima` CLI to create a VM (aarch64-based).
+- Docker images are actually combination of binary file + dependency files (optional) based on instruction in `Dockerfile` (used to generate the image). Using an image via `$ docker run ...` creates a new container with new id. You can find it via `$ docker ps` in running containers list. Now, that container would have the binary in the desired location as per `Dockerfile`. Like in rust-project, using cargo chef & eventually we use runtime to discard all the build cache (downloaded deps in `~/.cargo/.git/..`) & create the image. The build cache remains in the Docker Server machine. You can go to its file system to inspect. Also, you can clean build caches via `$ docker builder prune`. And then check via `$ docker system df`.
+- In most of the clouds, they support x86_64/amd64 architecture. That means your docker image must be created for those machines. Hence, need to use emulator tools like UTM where using Alpine linux (or similar tiny linux OS) can be used in CLI format to create docker image, which can be pushed to a registry like docker-hub. And then in the cloud, pull the image from container registry. And then cloud can host the container running that image.
 - Options for running Docker on macOS M1:
   - GUI
     - **Docker Desktop for Mac M1**: Used to run the engine on macOS. It is a native macOS application that you install on your computer. It creates a lightweight VM that runs Linux and then deploys the Docker Engine to that VM.
