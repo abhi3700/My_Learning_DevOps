@@ -1,5 +1,6 @@
 [workspace]
 members = [
-    "aws/examples"
+    "aws/examples",
+    "azure/examples",
 ]
 resolver = "2"

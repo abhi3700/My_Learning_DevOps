@@ -1,0 +1,12 @@
+[package]
+name = "az-examples"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+dotenvy = "0.15.7"
+eyre = "0.6.12"
+reqwest = { version = "0.12", features = ["json", "rustls-tls", "multipart", "stream"] }
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.149"
+tokio = { version = "1.52.1", features = ["macros", "rt-multi-thread", "time", "fs"] }
