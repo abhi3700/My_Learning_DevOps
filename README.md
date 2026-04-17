@@ -3,3 +3,7 @@
 Learn everything about DevOps
 
 ## Tools
+
+- Docker
+- AWS
+- Azure

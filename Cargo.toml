@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "aws/examples"
+]
+resolver = "2"
