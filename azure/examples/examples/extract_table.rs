@@ -49,7 +49,7 @@ struct DocumentTableCell {
 
 #[derive(Debug)]
 struct ExtractedTable {
-	headers: Vec<String>,
+	headers: Option<Vec<String>>,
 	rows: Vec<HashMap<String, String>>,
 }
 
@@ -130,6 +130,9 @@ impl AzureDocIntelClient {
 		let result = poll_analysis_result(&self.client, &poll_url, &self.api_key).await?;
 		let extracted = extract_target_table(&result.tables)?;
 
+		if let Some(headers) = &extracted.headers {
+			println!("Detected headers: {:?}", headers);
+		}
 		extracted.rows.into_iter().map(payment_row_from_map).collect()
 	}
 }
@@ -301,7 +304,7 @@ fn try_extract_table(table: &DocumentTable) -> Result<Option<ExtractedTable>> {
 		}
 	}
 
-	Ok(Some(ExtractedTable { headers: normalized_headers, rows }))
+	Ok(Some(ExtractedTable { headers: Some(normalized_headers), rows }))
 }
 
 /// Lowercase + trim, so " Network " -> "network"
